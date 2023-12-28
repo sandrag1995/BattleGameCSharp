@@ -77,11 +77,19 @@ namespace BattleGameV2
             PrintGameState(playerHp, enemyHp, playerMana, enemyMana, healthInventorySlots, manaInventorySlots);
 
             string choice;
+            bool isValidChoice;
+
             do
             {
                 choice = Console.ReadLine()?.ToUpper();
-            } while (choice != "A" && choice != "M" && choice != "HP" && choice != "MP");
+                isValidChoice = choice == "A" || choice == "M" || choice == "HP" || choice == "MP";
 
+                if (!isValidChoice)
+                {
+                    Console.WriteLine("Invalid command! Please enter a valid command.\n" +
+                        "Enter 'A' to attack, 'M' for magic attack. 'HP' to use health potion, 'MP' to use mana potion.");
+                }
+            } while (!isValidChoice);
             switch (choice)
             {
                 case "A":
@@ -129,6 +137,10 @@ namespace BattleGameV2
                     {
                         Console.WriteLine("You don't have enough mana points!\n");
                     }
+                    break;
+
+                    default: 
+                    Console.WriteLine("This command doesn't exist!");
                     break;
             }
         }
