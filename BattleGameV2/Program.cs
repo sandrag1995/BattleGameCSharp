@@ -2,15 +2,19 @@
 
 namespace BattleGameV2
 {
+
     internal class Program
     {
         //Player Section
-        private static string playerName = "Player";
+        private static string playerName = "";
 
         private const int MaxPlayerHp = 100;
         private const int MaxPlayerMana = 50;
         private const int MaxPlayerDamage = 10;
-        private const int MaxPlayerMagicDamage = 20;
+        private const int MaxPlayerMagicDamage = 15;
+        private const int SpecialMagicDamage = 50;
+
+        private const int PlayerExp = 0;
 
         //Player inventory
         private const int MaxManaInventorySlots = 5;
@@ -19,6 +23,8 @@ namespace BattleGameV2
         private const int PotionManaPoints = 20;
 
         //Enemy Section
+       private static string[] enemyNames = ["Slime", "Skeleton", "Zombie", "Thief", "Barbarian", "Witch", "Demon"];
+
         private const int MaxEnemyHp = 100;
         private const int MaxEnemyMana = 50;
         private const int MaxEnemyDamage = 7;
@@ -30,25 +36,29 @@ namespace BattleGameV2
         private const int MinDamage = 1;
         private const int MinMagicDamage = 5;
 
-
+       
         private static Random random = new Random();
 
         private static void Main(string[] args)
         {
+            String response;
             Console.WriteLine("-**Battle Game**-");
             Console.WriteLine("*****************\n");
             Console.WriteLine("Welcome, fighter!");
 
-            while (string.IsNullOrWhiteSpace(playerName) || playerName == "Player")
+            while (string.IsNullOrWhiteSpace(playerName))
             {
                 Console.WriteLine("What's your name? ");
                 playerName = Console.ReadLine();
             }
 
-
-            Console.WriteLine("Enter 'A' to attack, 'M' for magic attack. 'HP' to use health potion, 'MP' to use mana potion.\n");
-
-
+            Console.WriteLine("");
+            Console.WriteLine("Enter 'A' to attack, 'M' for magic attack or 'SMA' to use special magic attack.\n'HP' to use health potion, 'MP' to use mana potion.\n");
+            bool playAgain = true;
+            response = "";
+            while (playAgain)
+            {
+            
             int playerHp = MaxPlayerHp;
             int enemyHp = MaxEnemyHp;
             int playerMana = MaxPlayerMana;
@@ -66,8 +76,20 @@ namespace BattleGameV2
             }
 
             DisplayGameResult(playerHp);
+                response = Console.ReadLine();
+                response = response.ToUpper();
 
+                if (response == "Y")
+                {
+                    playAgain = true;
+                }
+                else
+                {
+                    playAgain = false;
+                }
+            }
             Console.WriteLine("Thank you for playing!");
+            Console.WriteLine("Press 'ENTER' to exit.");
             Console.ReadKey();
         }
 
@@ -75,6 +97,7 @@ namespace BattleGameV2
         {
             Console.WriteLine($"--- {playerName}'s turn ---");
             PrintGameState(playerHp, enemyHp, playerMana, enemyMana, healthInventorySlots, manaInventorySlots);
+            Console.WriteLine("What will you do next?");
 
             string choice;
             bool isValidChoice;
@@ -82,12 +105,12 @@ namespace BattleGameV2
             do
             {
                 choice = Console.ReadLine()?.ToUpper();
-                isValidChoice = choice == "A" || choice == "M" || choice == "HP" || choice == "MP";
+                isValidChoice = choice == "A" || choice == "M" || choice == "HP" || choice == "MP" || choice == "SMA";
 
                 if (!isValidChoice)
                 {
                     Console.WriteLine("Invalid command! Please enter a valid command.\n" +
-                        "Enter 'A' to attack, 'M' for magic attack. 'HP' to use health potion, 'MP' to use mana potion.");
+                        "Enter 'A' to attack, 'M' for magic attack or 'SMA' to use special magic attack.\n'HP' to use health potion, 'MP' to use mana potion.");
                 }
             } while (!isValidChoice);
             switch (choice)
@@ -130,8 +153,22 @@ namespace BattleGameV2
                     {
                         int magicAttack = random.Next(MinMagicDamage, MaxPlayerMagicDamage);
                         enemyHp -= magicAttack;
-                        playerMana -= 10;
+                        playerMana -= 15;
                         Console.WriteLine($"{playerName} casts a magic spell and deals {magicAttack} damage!\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You don't have enough mana points!\n");
+                    }
+                    break;
+
+                case "SMA":
+                    if (playerMana >= 50)
+                    {
+                        int magicAttack = SpecialMagicDamage;
+                        enemyHp -= magicAttack;
+                        playerMana -= 50;
+                        Console.WriteLine($"{playerName} casts a special magic spell and deals {magicAttack} damage!\n");
                     }
                     else
                     {
@@ -201,10 +238,12 @@ namespace BattleGameV2
             if (playerHp > 0)
             {
                 Console.WriteLine("Congratulations! You won!");
+                Console.WriteLine("Another enemy wants to fight you? Will you accept the challenge? (Y/N): ");
             }
             else
             {
-                Console.WriteLine("You lose!");
+                Console.WriteLine("Game over. You lose!");
+                Console.WriteLine("Would you like to try again? (Y/N): ");
             }
         }
     }
