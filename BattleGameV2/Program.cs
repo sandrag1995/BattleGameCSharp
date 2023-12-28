@@ -7,14 +7,13 @@ namespace BattleGameV2
     {
         //Player Section
         private static string playerName = "";
+        private const int PlayerExp = 0;
 
         private const int MaxPlayerHp = 100;
         private const int MaxPlayerMana = 50;
         private const int MaxPlayerDamage = 10;
         private const int MaxPlayerMagicDamage = 15;
         private const int SpecialMagicDamage = 50;
-
-        private const int PlayerExp = 0;
 
         //Player inventory
         private const int MaxManaInventorySlots = 5;
@@ -56,8 +55,10 @@ namespace BattleGameV2
             Console.WriteLine("Enter 'A' to attack, 'M' for magic attack or 'SMA' to use special magic attack.\n'HP' to use health potion, 'MP' to use mana potion.\n");
             bool playAgain = true;
             response = "";
+            int playerExp = PlayerExp;
             while (playAgain)
             {
+
             
             int playerHp = MaxPlayerHp;
             int enemyHp = MaxEnemyHp;
@@ -68,20 +69,26 @@ namespace BattleGameV2
 
             while (playerHp > 0 && enemyHp > 0)
             {
-                PlayerTurn(ref playerHp, ref enemyHp, ref playerMana, ref enemyMana, ref healthInventorySlots, ref manaInventorySlots);
+                PlayerTurn(ref playerHp, ref enemyHp, ref playerMana, ref enemyMana, ref healthInventorySlots, ref manaInventorySlots, ref playerExp);
                 if (enemyHp > 0)
                 {
                     EnemyTurn(ref playerHp, ref enemyHp, ref enemyMana);
                 }
             }
 
-            DisplayGameResult(playerHp);
+            DisplayGameResult(playerHp, playerExp);
+                
                 response = Console.ReadLine();
                 response = response.ToUpper();
+                
 
                 if (response == "Y")
                 {
                     playAgain = true;
+                    if (playerHp > 0)
+                    {
+                        playerExp += 100;
+                    }
                 }
                 else
                 {
@@ -93,10 +100,10 @@ namespace BattleGameV2
             Console.ReadKey();
         }
 
-        private static void PlayerTurn(ref int playerHp, ref int enemyHp, ref int playerMana, ref int enemyMana, ref int healthInventorySlots, ref int manaInventorySlots)
+        private static void PlayerTurn(ref int playerHp, ref int enemyHp, ref int playerMana, ref int enemyMana, ref int healthInventorySlots, ref int manaInventorySlots, ref int playerExp)
         {
             Console.WriteLine($"--- {playerName}'s turn ---");
-            PrintGameState(playerHp, enemyHp, playerMana, enemyMana, healthInventorySlots, manaInventorySlots);
+            PrintGameState(playerHp, enemyHp, playerMana, enemyMana, healthInventorySlots, manaInventorySlots, playerExp);
             Console.WriteLine("What will you do next?");
 
             string choice;
@@ -214,13 +221,14 @@ namespace BattleGameV2
             }
         }
 
-        private static void PrintGameState(int playerHp, int enemyHp, int playerMana, int enemyMana, int healthInventorySlots, int manaInventorySlots)
+        private static void PrintGameState(int playerHp, int enemyHp, int playerMana, int enemyMana, int healthInventorySlots, int manaInventorySlots, int playerExp)
         {
             Console.WriteLine($"{playerName} Hp - {playerHp}. Enemy Hp - {enemyHp}.");
             Console.WriteLine($"{playerName} Mp - {playerMana}. Enemy Mp - {enemyMana}.");
 
             Console.WriteLine($"Health Potions - {healthInventorySlots} of {MaxHealthInventorySlots}");
             Console.WriteLine($"Mana Potions   - {manaInventorySlots} of {MaxManaInventorySlots}.\n");
+            Console.WriteLine($"Your current EXP points - {playerExp} points.");
 
             if (healthInventorySlots == 0)
             {
@@ -233,16 +241,17 @@ namespace BattleGameV2
             }
         }
 
-        private static void DisplayGameResult(int playerHp)
+        private static void DisplayGameResult(int playerHp, int playerExp)
         {
             if (playerHp > 0)
             {
-                Console.WriteLine("Congratulations! You won!");
+                Console.WriteLine("Congratulations! You earned 100 EXP!");
                 Console.WriteLine("Another enemy wants to fight you? Will you accept the challenge? (Y/N): ");
             }
             else
             {
                 Console.WriteLine("Game over. You lose!");
+                Console.WriteLine($"Total experience points: {playerExp}");
                 Console.WriteLine("Would you like to try again? (Y/N): ");
             }
         }
