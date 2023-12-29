@@ -8,22 +8,25 @@ namespace BattleGameV2
         //Player Section
         private static string playerName = "";
         private const int PlayerExp = 0;
+        private const int PlayerGold = 50;
 
         private const int MaxPlayerHp = 100;
         private const int MaxPlayerDamage = 10;
 
         private const int MaxPlayerMana = 50;
         private const int MaxPlayerMagicDamage = 15;
-        private const int SpecialMagicDamage = 100;
+        private const int SpecialMagicDamage = 50;
 
         //Player inventory
         private const int MaxManaInventorySlots = 5;
         private const int MaxHealthInventorySlots = 5;
+
+        //Potion restore points
         private const int PotionHealthPoints = 20;
         private const int PotionManaPoints = 20;
 
         //Enemy Section
-       private static string[] enemyNames = ["Slime", "Skeleton", "Zombie", "Thief", "Barbarian", "Witch", "Demon"];
+       private static string[] enemyNames = ["Slime", "Skeleton", "Zombie", "Thief", "Barbarian", "Witch", "Dark Mage", "Demon"];
        private static int currentEnemyIndex = 0;
 
         private const int MaxEnemyHp = 100;
@@ -43,12 +46,6 @@ namespace BattleGameV2
         private static void Main(string[] args)
         {
             String response;
-
-            string[] intro = File.ReadAllLines("gamescript.txt");
-            for (int i = 0; i < intro.Length; i++)
-            {
-                Console.WriteLine(intro[i]);
-            }
 
             Console.WriteLine("-**Battle Game**-");
             Console.WriteLine("*****************\n");
@@ -179,6 +176,8 @@ namespace BattleGameV2
                         int magicAttack = random.Next(MinMagicDamage, MaxPlayerMagicDamage);
                         enemyHp -= magicAttack;
                         playerMana -= 15;
+
+                        FireBallEffect();
                         Console.WriteLine($"{playerName} casts a magic spell and deals {magicAttack} damage!\n");
                     }
                     else
@@ -193,6 +192,7 @@ namespace BattleGameV2
                         int magicAttack = SpecialMagicDamage;
                         enemyHp -= magicAttack;
                         playerMana -= 50;
+                        SpecialFireEffect();
                         Console.WriteLine($"{playerName} casts a special magic spell and deals {magicAttack} damage!\n");
                     }
                     else
@@ -271,6 +271,33 @@ namespace BattleGameV2
                 Console.WriteLine("Game over. You lose!");
                 Console.WriteLine($"Total experience points: {playerExp}");
                 Console.WriteLine("Would you like to try again? (Y/N): ");
+            }
+        }
+
+        private static void FireBallEffect()
+        {
+            string[] intro = File.ReadAllLines("fireball.txt");
+            for (int i = 0; i < intro.Length; i++)
+            {
+                Console.WriteLine(intro[i]);
+            }
+        }
+
+        private static void SpecialFireEffect()
+        {
+            string[] intro = File.ReadAllLines("fireeffect.txt");
+            for (int i = 0; i < intro.Length; i++)
+            {
+                Console.WriteLine(intro[i]);
+            }
+        }
+
+        private static void SpecialWaterEffect()
+        {
+            string[] intro = File.ReadAllLines("watereffect.txt");
+            for (int i = 0; i < intro.Length; i++)
+            {
+                Console.WriteLine(intro[i]);
             }
         }
     }
