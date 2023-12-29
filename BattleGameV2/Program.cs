@@ -10,10 +10,11 @@ namespace BattleGameV2
         private const int PlayerExp = 0;
 
         private const int MaxPlayerHp = 100;
-        private const int MaxPlayerMana = 50;
         private const int MaxPlayerDamage = 10;
+
+        private const int MaxPlayerMana = 50;
         private const int MaxPlayerMagicDamage = 15;
-        private const int SpecialMagicDamage = 50;
+        private const int SpecialMagicDamage = 100;
 
         //Player inventory
         private const int MaxManaInventorySlots = 5;
@@ -23,6 +24,7 @@ namespace BattleGameV2
 
         //Enemy Section
        private static string[] enemyNames = ["Slime", "Skeleton", "Zombie", "Thief", "Barbarian", "Witch", "Demon"];
+       private static int currentEnemyIndex = 0;
 
         private const int MaxEnemyHp = 100;
         private const int MaxEnemyMana = 50;
@@ -41,6 +43,13 @@ namespace BattleGameV2
         private static void Main(string[] args)
         {
             String response;
+
+            string[] intro = File.ReadAllLines("gamescript.txt");
+            for (int i = 0; i < intro.Length; i++)
+            {
+                Console.WriteLine(intro[i]);
+            }
+
             Console.WriteLine("-**Battle Game**-");
             Console.WriteLine("*****************\n");
             Console.WriteLine("Welcome, fighter!");
@@ -56,17 +65,20 @@ namespace BattleGameV2
             bool playAgain = true;
             response = "";
             int playerExp = PlayerExp;
-            while (playAgain)
-            {
 
-            
+            //Player's status during next round
             int playerHp = MaxPlayerHp;
-            int enemyHp = MaxEnemyHp;
-            int playerMana = MaxPlayerMana;
-            int enemyMana = MaxEnemyMana;
             int healthInventorySlots = MaxManaInventorySlots;
             int manaInventorySlots = MaxManaInventorySlots;
+            int playerMana = MaxPlayerMana;
+            
+            while (playAgain)
+            {
+                int enemyMana = MaxEnemyMana;
+                int enemyHp = MaxEnemyHp;
 
+                Console.WriteLine("Prepare yourself!");
+            Console.WriteLine($"Your challenger is {enemyNames[currentEnemyIndex]}!\n");
             while (playerHp > 0 && enemyHp > 0)
             {
                 PlayerTurn(ref playerHp, ref enemyHp, ref playerMana, ref enemyMana, ref healthInventorySlots, ref manaInventorySlots, ref playerExp);
@@ -84,6 +96,12 @@ namespace BattleGameV2
 
                 if (response == "Y")
                 {
+                    currentEnemyIndex++;
+                    if (currentEnemyIndex >= enemyNames.Length)
+                    {
+                        currentEnemyIndex = 0;
+                    }
+
                     playAgain = true;
                     if (playerHp > 0)
                     {
@@ -200,7 +218,7 @@ namespace BattleGameV2
                 case 0:
                     int enemyAttack = random.Next(MinDamage, MaxEnemyDamage);
                     playerHp -= enemyAttack;
-                    Console.WriteLine($"Enemy attacks and deals {enemyAttack} damage!\n");
+                    Console.WriteLine($"{enemyNames[currentEnemyIndex]} attacks and deals {enemyAttack} damage!\n");
                     break;
 
                 case 1:
@@ -209,14 +227,14 @@ namespace BattleGameV2
                         int magicAttack = random.Next(MinMagicDamage, MaxEnemyMagicDamage);
                         playerHp -= magicAttack;
                         enemyMana -= 10;
-                        Console.WriteLine($"Enemy casts a magic spell and deals {magicAttack} damage!\n");
+                        Console.WriteLine($"{enemyNames[currentEnemyIndex]} casts a magic spell and deals {magicAttack} damage!\n");
                     }
                     break;
 
                 case 2:
                     int healAmount = random.Next(MinHealAmount, MaxHealAmount);
                     enemyHp = Math.Min(MaxEnemyHp, enemyHp + healAmount);
-                    Console.WriteLine($"Enemy restores {healAmount} health points!\n");
+                    Console.WriteLine($"{enemyNames[currentEnemyIndex]} restores {healAmount} health points!\n");
                     break;
             }
         }
